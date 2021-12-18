@@ -53,6 +53,16 @@ public class GameboardView: UIView {
         addSubview(markView)
     }
     
+    public func placeRandomMarkView(_ markView: MarkView) {
+        var positionRandom = getRandomPosition()
+        while !self.canPlaceMarkView(at: positionRandom) {
+            positionRandom = getRandomPosition()
+        }
+        updateFrame(for: markView, at: positionRandom)
+        markViewForPosition[positionRandom] = markView
+        addSubview(markView)
+    }
+    
     public func removeMarkView(at position: GameboardPosition) {
         guard let markView = markViewForPosition[position] else {
             return
@@ -141,5 +151,9 @@ public class GameboardView: UIView {
                                 width: columnWidth,
                                 height: rowHeight).insetBy(dx: 0.5 * Constants.lineWidth,
                                                            dy: 0.5 * Constants.lineWidth)
+    }
+    
+    private func getRandomPosition() -> GameboardPosition {
+        GameboardPosition(column: Int.random(in: 0...2), row: Int.random(in: 0...2))
     }
 }

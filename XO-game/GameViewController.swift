@@ -24,6 +24,8 @@ class GameViewController: UIViewController {
 	}
 	private lazy var referee = Referee(gameboard: self.gameboard)
     
+    var playersStrategy: PlayStrategy?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 		self.goToFirstState()
@@ -35,15 +37,15 @@ class GameViewController: UIViewController {
 			}
 		}
     }
-
-	private func goToFirstState() {
-		let player = Player.first
-		self.currentState = PlayerInputState(player: player,
-											 markViewPrototype: player.markViewPrototype,
-											 gameViewController: self,
-											 gameboard: gameboard,
-											 gameboardView: gameboardView)
-	}
+    
+    private func goToFirstState() {
+        let player = Player.first
+        self.currentState = playersStrategy?.choseState(player: player,
+                                                        markViewPrototype: player.markViewPrototype,
+                                                        gameViewController: self,
+                                                        gameboard: gameboard,
+                                                        gameboardView: gameboardView)
+    }
 
 	private func goToNextState() {
 
@@ -52,14 +54,23 @@ class GameViewController: UIViewController {
 			return
 		}
 
-		if let playerInputState = currentState as? PlayerInputState {
+		if let playerInputState = currentState as? AIRandomInputState {
 			let player = playerInputState.player.next
-			self.currentState = PlayerInputState(player: player,
+			self.currentState = AIRandomInputState(player: player,
 												 markViewPrototype: player.markViewPrototype,
 												 gameViewController: self,
 												 gameboard: gameboard,
 												 gameboardView: gameboardView)
 		}
+        
+        if let playerInputState = currentState as? PlayerInputState {
+            let player = playerInputState.player.next
+            self.currentState = PlayerInputState(player: player,
+                                                 markViewPrototype: player.markViewPrototype,
+                                                 gameViewController: self,
+                                                 gameboard: gameboard,
+                                                 gameboardView: gameboardView)
+        }
 	}
     
     @IBAction func restartButtonTapped(_ sender: UIButton) {
